@@ -1,0 +1,73 @@
+﻿@model Test.UI.Models.PrinterSelectViewModel
+@{
+    ViewData["Title"] = "SelectPrinter";
+}
+
+<div class="row">
+    <form method="post" asp-action="SaveCNSelectedPrinter">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h1>CN Printer selection Form</h1>
+                </div>
+                @Html.HiddenFor(model => model.PrinterId)
+                <input type="hidden" asp-for="PrinterType" value="P"/>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="form-group">
+                                <label>CN Printer:<span class="text-danger text-md" aria-hidden="true">*</span></label>
+                                @Html.DropDownListFor(model => model.CNSelectedPrinter, Model.PrinterList, new { @class = "form-control form-select", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <button style="margin-top:1.3rem" class="btn btn-md btn-primary" type="submit">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <form method="post" asp-action="SaveBarcodeSelectedPrinter">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h1>Barcode Printer Selection Form</h1>
+                </div>
+                @Html.HiddenFor(model => model.PrinterId)
+                <input type="hidden" asp-for="PrinterType" value="B" />
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label>Barcode Printer:<span class="text-danger text-md" aria-hidden="true">*</span></label>
+                                @Html.DropDownListFor(model => model.BarcodeSelectedPrinter, Model.PrinterList, new { @class = "form-control form-select", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Barcode Show<span class="text-danger text-md" aria-hidden="true">*</span></label>
+                                <select class="form-control form-select" asp-for="HV">
+                                    <option value="">Select Type</option>
+                                    <option value="H">Horizontal</option>
+                                    <option value="V">Vertical</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <button style="margin-top:1.3rem" class="btn btn-md btn-primary float-right" type="submit">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+@section scripts {
+   
+}
+

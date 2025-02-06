@@ -1,0 +1,31 @@
+﻿@model Test.UI.Models.PrinterSelectViewModel
+@{
+    ViewData["Title"] = "SelectPrinter";
+}
+<form asp-controller="ImageToText" asp-action="ProcessImage" method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-11">
+            <div class="form-group">
+                <label>Select Image:<span class="text-red text-md" aria-hidden="true">*</span></label>
+                <input type="file" name="imageFile" id="imageFile" class="form-control" accept="image/*" required />
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="form-group">
+                <button style="margin-top:.80rem" class="btn btn-md btn-primary float-right" type="submit">Extract Text</button>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            @if (ViewData["ExtractedText"] != null)
+            {
+                <h3>Extracted Text:</h3>
+                <p>@ViewData["ExtractedText"]</p>
+            }
+        </div>
+    </div>
+</form>
+@section scripts {
+
+}

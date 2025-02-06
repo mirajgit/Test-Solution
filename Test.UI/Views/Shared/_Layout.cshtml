@@ -1,0 +1,73 @@
+﻿<!doctype html>
+<html lang="en" dir="ltr">
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+   <partial name="_CSSPartial" />
+</head>
+
+<body class="ltr app sidebar-mini light-mode">
+    <!-- GLOBAL-LOADER -->
+    <div id="global-loader">
+        <img src="~/assets/images/loader.svg" class="loader-img" alt="Loader">
+    </div>
+    <!-- /GLOBAL-LOADER -->
+    <!-- PAGE -->
+    <div class="page">
+        <div class="page-main">
+            <!-- app-Header -->
+           <partial name="_AppHeader" />
+            <!-- /app-Header -->
+            <!--APP-SIDEBAR-->
+            <div class="sticky">
+                <div class="app-sidebar__overlay" data-bs-toggle="sidebar"></div>
+                <div class="app-sidebar">
+                    <div class="side-header">
+                        <a class="header-brand1" href="index.html">
+                            <img src="~/assets/images/brand/logo.png" class="header-brand-img desktop-logo" alt="logo">
+                            <img src="~/assets/images/brand/logo-1.png" class="header-brand-img toggle-logo" alt="logo">
+                            <img src="~/assets/images/brand/logo-2.png" class="header-brand-img light-logo" alt="logo">
+                            <img src="~/assets/images/brand/logo-3.png" class="header-brand-img light-logo1" alt="logo">
+                        </a><!-- LOGO -->
+                    </div>
+                   <partial name="_Sidebar" />
+                </div>
+            </div>
+            <!--/APP-SIDEBAR-->
+            <!--app-content open-->
+            <div class="app-content main-content mt-0">
+                <div class="side-app">
+                    <!-- CONTAINER -->
+                    <div class="main-container">
+                        <div class="row">
+                            @RenderBody()
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row align-items-center flex-row-reverse">
+                    <div class="col-md-12 col-sm-12 text-center">
+                        Copyright © 2022 <a href="#">Noa</a>. Designed with <span class="fa fa-heart text-danger"></span> by <a href="#"> Spruko </a> All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- FOOTER CLOSED -->
+
+    </div>
+    <!-- page -->
+    <!-- BACK-TO-TOP -->
+    <a href="#top" id="back-to-top"><i class="fa fa-long-arrow-up"></i></a>
+    <partial name="_JSPartial" />
+    @* <script src="~/appjs/sidebar.js" asp-append-version="true"></script> *@
+    <script src="~/appjs/SidebarManuFilter.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    @await Component.InvokeAsync("Notyf")
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

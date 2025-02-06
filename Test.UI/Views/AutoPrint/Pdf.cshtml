@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewData["Title"] = "Pdf";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <form asp-controller="AutoPrint" asp-action="PrintReport" method="post">
+            <button type="submit" class="btn btn-primary">PDF</button>
+        </form>
+    </div>
+</div>
+<br />
+<br />
+<br />
+<div class="container-fluid">
+    <div class="row">
+        <form asp-controller="AutoPrint" asp-action="PdfGenerates" method="post"target="_blank">
+            <button type="submit" class="btn btn-primary">PDF View</button>
+        </form>
+    </div>
+</div>
+@section scripts {
+
+}

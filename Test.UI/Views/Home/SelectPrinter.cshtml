@@ -1,0 +1,15 @@
+﻿@model Test.UI.Models.PrinterSelectViewModel
+@{
+    ViewData["Title"] = "SelectPrinter";
+}
+<h2>Select Printer</h2>
+
+<!-- Create a form to select the printer -->
+<form method="post" asp-action="SaveCNSelectedPrinter">
+    <div>
+        <label for="printer">Select Printer:</label>
+        @Html.DropDownListFor(model => model.CNSelectedPrinter, Model.PrinterList, new { @class = "form-control", @required = "required" })
+    </div>
+
+    <button type="submit">Save</button>
+</form>

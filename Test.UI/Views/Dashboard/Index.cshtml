@@ -1,0 +1,165 @@
+﻿@model Test.UI.Models.Product
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!-- FontAwesome CDN -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+<div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h4>Products</h4>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <table class="table table-hover" id="tblProduct">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h4>Sales</h4>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <table class="table table-hover" id="tblSale">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Purchased On</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h4>Customers</h4>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <table class="table table-hover" id="tblCustomer">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Gender</th>
+                                <th>Mobile</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h4>Products</h4>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <canvas id="canvasProudcts" width="400" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h4>Sales</h4>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <canvas id="canvasSales" width="500" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h4>Customers</h4>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <canvas id="canvasCustomers" width="300" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-xl">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-cyan">
+                <h4 class="modal-title">Product Edit</h4>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12" style="line-height:1.50px;">
+                        @Html.HiddenFor(model => model.Id)
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Product Name</label>
+                                    <input class="form-control" asp-for="Name"/>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Product Price</label>
+                                    <input class="form-control" asp-for="Price" />
+                                </div>
+                            </div>
+                             <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Product Category</label>
+                                    <input class="form-control" asp-for="Category" />
+                                </div>
+                            </div>
+                            <div class="col-md-1" style="margin-top:.80rem">
+                                <input type="button" class="btn btn-md btn-success float-right" id="btnUpdate" value="Update" />
+                            </div>
+                            <div class="col-md-1" style="margin-top:.80rem">
+                                <input type="button" class="btn btn-md btn-primary float-right" id="btnSubmit" value="Submit" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.js"></script>
+    <script src="~/appjs/dashboard.js" asp-append-version="true"></script>
+}

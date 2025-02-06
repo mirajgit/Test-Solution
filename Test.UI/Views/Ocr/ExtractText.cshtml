@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewData["Title"] = "ExtractText";
+}
+
+<h2>Upload an Image for OCR</h2>
+
+@if (ViewBag.Error != null)
+{
+    <p style="color:red">@ViewBag.Error</p>
+}
+else if (ViewBag.ExtractedText != null)
+{
+    <p><strong>Extracted Text:</strong></p>
+    <pre>@ViewBag.ExtractedText</pre>
+}
+else
+{
+    <p>No text has been extracted yet.</p>
+}
+
+<form asp-action="ExtractTextFromFile" asp-controller="OCR" method="post" enctype="multipart/form-data">
+    <div>
+        <input type="file" name="file" />
+    </div>
+    <button type="submit">Upload and Extract</button>
+</form>
+
