@@ -1,3 +1,4 @@
+/*Scaffold-DbContext "Server=SPLITPC003\SQL19;Database=SMSanagement_DB;User Id=test;Password=123456789;TrustServerCertificate=True;Encrypt=False;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Entities -ContextDir Contexts -Namespace "Test.Entities" -UseDatabaseNames -Force -NoPluralize */
 /*Gradient variables*/
 /*Background variables*/
 /*gray variables*/
@@ -9,7 +10,7 @@
 /*---------- Header-styles ----------*/
 /*Header-Color*/
 .color-header .main-header-center .form-control {
-  color: #fff;
+    color: #fff;
 }
 .color-header .main-header-center .form-control::-moz-placeholder {
   color: #fff !important;

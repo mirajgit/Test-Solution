@@ -26,7 +26,6 @@ connection.on("ReceivedProducts", function (products) {
 
 function BindProductsToGrid(products) {
 	$('#tblProduct tbody').empty();
-
 	var tr;
 	$.each(products, function (index, product) {
 		tr = $('<tr/>');

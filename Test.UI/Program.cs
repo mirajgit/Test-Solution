@@ -1,5 +1,4 @@
 using AspNetCoreHero.ToastNotification;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Test.Entities;
 using Test.UI.Hubs;
@@ -32,9 +31,11 @@ builder.Services.AddSignalR();
 builder.Services.AddScoped<IPrinterRepository, PrinterRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddSingleton<DashboardHub>();
+builder.Services.AddSingleton<ProductHub>();
 builder.Services.AddSingleton<SubscribeProductTableDependency>();
 builder.Services.AddSingleton<SubscribeSaleTableDependency>();
 builder.Services.AddSingleton<SubscribeCustomerTableDependency>();
+builder.Services.AddSingleton<SubscribeShoppingProductTableDependency>();
 
 // Configure Notification Service
 builder.Services.AddNotyf(config =>
@@ -63,6 +64,7 @@ app.UseAuthorization();
 
 // Configure SignalR route and Map controller route
 app.MapHub<DashboardHub>("/dashboardHub");
+app.MapHub<ProductHub>("/productHub");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
@@ -71,6 +73,7 @@ app.MapControllerRoute(
 app.UseSqlTableDependency<SubscribeProductTableDependency>(connectionString);
 app.UseSqlTableDependency<SubscribeSaleTableDependency>(connectionString);
 app.UseSqlTableDependency<SubscribeCustomerTableDependency>(connectionString);
+app.UseSqlTableDependency<SubscribeShoppingProductTableDependency>(connectionString);
 
 // Run the application
 app.Run();

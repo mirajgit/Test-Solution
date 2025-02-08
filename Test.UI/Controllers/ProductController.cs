@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Test.Entities;
+using Test.UI.Hubs;
 using Test.UI.Services.Interface;
+using Test.UI.SubscribeTableDependencies;
 using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 
 namespace Test.UI.Controllers
@@ -8,12 +11,16 @@ namespace Test.UI.Controllers
     public class ProductController : Microsoft.AspNetCore.Mvc.Controller
     {
         private readonly IProductRepository _iProductRepository;
-
-        public ProductController(IProductRepository iProductRepository)
+        private readonly IHubContext<ProductHub> _productHubContext;
+        private readonly SubscribeProductTableDependency subscribeProductTableDependency;
+        private string _connectionString;
+        public ProductController(IConfiguration Configuration, IProductRepository iProductRepository, IHubContext<ProductHub> productHubContext, SubscribeProductTableDependency subscribeProductTableDependency)
         {
             _iProductRepository = iProductRepository;
+            _productHubContext = productHubContext;
+            this.subscribeProductTableDependency = subscribeProductTableDependency;
+            _connectionString= Configuration.GetConnectionString("Test_Con");
         }
-
         [HttpPost]
         public IActionResult ProductCreate(Product model)
         {
@@ -25,7 +32,9 @@ namespace Test.UI.Controllers
                     return Json(new { Success = false, Message = "Product Name is already exist! " });
                 }
                 _iProductRepository.AddProduct(model);
-                return Json(new { Success = true, Message = "Saved Successfuly" });
+                subscribeProductTableDependency.SubscribeTableDependency(_connectionString);
+                // Return success response
+                return Json(new { Success = true, Message = "Saved Successfully" });
             }
             catch (Exception ex)
             {

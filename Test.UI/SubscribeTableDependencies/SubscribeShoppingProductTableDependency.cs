@@ -1,21 +1,21 @@
 ﻿using TableDependency.Enums;
 using TableDependency.EventArgs;
 using TableDependency.SqlClient;
+using Test.Entities;
 using Test.UI.Hubs;
-using Test.UI.Models;
 
 namespace Test.UI.SubscribeTableDependencies
 {
-    public class SubscribeProductTableDependency : ISubscribeTableDependency
+    public class SubscribeShoppingProductTableDependency: ISubscribeTableDependency
     {
         SqlTableDependency<Product> tableDependency;
-        DashboardHub dashboardHub;
         ProductHub productHub;
+        DashboardHub dashboardHub;
 
-        public SubscribeProductTableDependency(DashboardHub dashboardHub, ProductHub productHub)
+        public SubscribeShoppingProductTableDependency(ProductHub productHub, DashboardHub dashboardHub)
         {
-            this.dashboardHub = dashboardHub;
             this.productHub = productHub;
+            this.dashboardHub = dashboardHub;
         }
 
         public void SubscribeTableDependency(string connectionString)
@@ -33,10 +33,10 @@ namespace Test.UI.SubscribeTableDependencies
 
         private void TableDependency_OnChanged(object sender, RecordChangedEventArgs<Product> e)
         {
-            if (e.ChangeType == ChangeType.Update || e.ChangeType == ChangeType.Insert || e.ChangeType == ChangeType.Delete)
+           if (e.ChangeType == ChangeType.Update || e.ChangeType == ChangeType.Insert || e.ChangeType == ChangeType.Delete)
             {
-                _ = Task.Run(async () => await dashboardHub.SendProducts()); // No parameter
                 _ = Task.Run(async () => await productHub.SendShoppingProducts()); // No parameter
+                _ = Task.Run(async () => await dashboardHub.SendProducts());
             }
         }
     }

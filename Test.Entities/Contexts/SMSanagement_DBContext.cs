@@ -86,6 +86,8 @@ public partial class SMSanagement_DBContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK_Person");
 
+            entity.ToTable(tb => tb.HasTrigger("tr_dbo_Customer_f721e9d3-d4cb-4af8-847b-4a7413dc1ecc"));
+
             entity.Property(e => e.Gender).HasMaxLength(10);
             entity.Property(e => e.Mobile)
                 .HasMaxLength(10)
@@ -114,9 +116,18 @@ public partial class SMSanagement_DBContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
+            entity.ToTable(tb =>
+                {
+                    tb.HasTrigger("tr_dbo_Product_03e044e1-7cb2-41e3-88b8-da54f7511e2a");
+                    tb.HasTrigger("tr_dbo_Product_0b0f539b-8c20-437c-808d-a3621e7c9a1f");
+                    tb.HasTrigger("tr_dbo_Product_ff3a6198-d3c1-424e-b776-2ce123826d72");
+                });
+
             entity.Property(e => e.Category)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Description).HasMaxLength(550);
+            entity.Property(e => e.Image).HasMaxLength(550);
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -135,6 +146,12 @@ public partial class SMSanagement_DBContext : DbContext
         modelBuilder.Entity<Sale>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_Sales");
+
+            entity.ToTable(tb =>
+                {
+                    tb.HasTrigger("tr_dbo_Sale_185cb40d-d675-43d1-abac-7dc3345b71f7");
+                    tb.HasTrigger("tr_dbo_Sale_2882a185-9da5-4aff-a650-a25b2db56bcc");
+                });
 
             entity.Property(e => e.Amount).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.Customer)

@@ -26,7 +26,10 @@ namespace Test.UI.Repositories
                     Id = Convert.ToInt32(row["Id"]),
                     Name = row["Name"].ToString(),
                     Category = row["Category"].ToString(),
-                    Price = Convert.ToDecimal(row["Price"])
+                    Price = Convert.ToDecimal(row["Price"]),
+                    Discount = Convert.ToInt32(row["Discount"]),
+                    Image = row["Image"].ToString(),
+                    Description = row["Description"].ToString()
                 };
                 products.Add(product);
             }
@@ -36,7 +39,7 @@ namespace Test.UI.Repositories
 
         private DataTable GetProductDetailsFromDb()
         {
-            var query = "SELECT Id,Name,Category,Price FROM Product";
+            var query = "SELECT Id,Name,Category,Price,Image,Description,isnull(Discount,0) Discount FROM Product";
             DataTable dataTable = new DataTable();
 
             using (SqlConnection connection = new SqlConnection(connectionString))

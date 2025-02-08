@@ -1,0 +1,93 @@
+/* Discount circle styles */
+.discount-circle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    background-color: red;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10; /* Ensure the discount circle is on top */
+}
+
+/* Other card styles (unchanged from your original CSS) */
+.card {
+    position: relative; /* Needed for positioning the discount circle inside the card */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    border-radius: 12px;
+    overflow: hidden;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ensure all cards have consistent height */
+}
+
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+.card-img-top {
+    object-fit: cover;
+    height: 200px; /* Fixed height for images */
+    width: 100%; /* Full width of the card */
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #28a745;
+    margin-bottom: 10px; /* Added margin for spacing */
+}
+
+.btn-custom {
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 10px 20px;
+}
+
+.card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-text {
+    font-size: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    margin-bottom: 15px; /* Margin to space out content */
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Add space between the cards */
+}
+
+.col-md-3, .col-lg-3 {
+    flex: 1 0 21%; /* 4 cards per row */
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+    .col-sm-6 {
+        flex: 1 0 48%; /* 2 cards per row */
+    }
+}
+
+@media (max-width: 576px) {
+    .col-12 {
+        flex: 1 0 100%; /* 1 card per row */
+    }
+}
