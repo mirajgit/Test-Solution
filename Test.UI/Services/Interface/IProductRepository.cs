@@ -1,12 +1,13 @@
 ﻿using Test.Entities;
+using Test.UI.Models;
 
 namespace Test.UI.Services.Interface
 {
     public interface IProductRepository
     {
-        List<Product> GetAllProduct();
-        Product? GetProductById(int Id);
-        void AddProduct(Product model);
-        void UpdateProduct(Product model);
+        List<ProductViewModel> GetAllProduct();
+        ProductViewModel? GetProductById(int Id);
+        void AddProduct(ProductViewModel model);
+        void UpdateProduct(ProductViewModel model);
     }
 }

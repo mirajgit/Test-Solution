@@ -1,5 +1,7 @@
-﻿"use strict";
-
+﻿$('document').ready(function () {
+	GetDataOnPageLoad();
+});
+"use strict";
 var connection = new signalR.HubConnectionBuilder().withUrl("/productHub").build();
 $(function () {
     connection.start().then(function () {
@@ -60,3 +62,93 @@ function BindProductsToGrid(products) {
 }
 
 
+function GetEditProduct(id) {
+	var param = {};
+	param.id = id;
+	$.get("/Product/EditProduct", param, function (res) {
+		if (!res.success) {
+			toastr.warning(res.Message);
+		}
+		else {
+			$("#Id").val(res.record.id);
+			$("#Name").val(res.record.name);
+			$("#Category").val(res.record.category);
+			$("#Price").val(res.record.price);
+			$("#Discount").val(res.record.discount);
+			$("#Description").val(res.record.description);
+		}
+	});
+}
+
+$(document).on("click", "#btnUpdate", function () {
+	var Id = $("#Id").val();
+	var Name = $("#Name").val();
+	var Category = $("#Category").val();
+	var Price = $("#Price").val();
+	var Discount = $("#Discount").val();
+	var Description = $("#Description").val();
+	var postData = {
+		'Id': Id,
+		'Name': Name,
+		'Category': Category,
+		'Price': Price,
+		'Discount': Discount,
+		'Description': Description,
+	};
+	$.post("/Product/ProductUpdate", postData, function (res) {
+		if (res.success) {
+			toastr.success(res.message);
+			ClearUI()
+		}
+		else {
+
+			toastr.warning(res.message);
+		}
+	});
+});
+$(document).on("click", "#btnSubmit", function () {
+	var Name = $("#Name").val();
+	var Category = $("#Category").val();
+	var Price = $("#Price").val();
+	var Discount = $("#Discount").val();
+	var Description = $("#Description").val();
+	var postData = {
+		'Name': Name,
+		'Category': Category,
+		'Price': Price,
+		'Discount': Discount,
+		'Description': Description,
+	};
+	$.post("/Product/ProductCreate", postData, function (res) {
+		if (res.success) {
+			toastr.success(res.message);
+			ClearUI()
+		}
+		else {
+
+			toastr.warning(res.message);
+		}
+	});
+});
+
+
+function ClearUI() {
+	$("#Id").val(0);
+	$("#Name").val('');
+	$("#Category").val('');
+	$("#Price").val('');
+	$("#Discount").val('');
+	$("#Description").val('');
+	$('#modal-xl').modal('hide');
+	InvokeShoppingProducts();
+}
+function GetDataOnPageLoad() {
+	$("#ShoppingList").html("");
+	$.ajax({
+		type: "POST",
+		url: "/ShoppingProduct/ShoppingList",
+		success: function (response) {
+			$("#ShoppingList").html(response);
+		}
+	});
+}

@@ -1,4 +1,4 @@
-﻿@model Test.UI.Models.Product
+﻿@model Test.UI.Models.ProductViewModel
 @{
     ViewData["Title"] = "Shopping";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -11,6 +11,64 @@
     </div>
 </div>
 
+<div class="container-fluid mt-3">
+    <div id="ShoppingList">
+       
+    </div>
+</div>
+
+<div class="modal fade" id="modal-xl" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-cyan">
+                <h4 class="modal-title">Product Edit</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                @Html.HiddenFor(model => model.Id)
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Product Name</label>
+                            <input class="form-control" asp-for="Name" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Product Price</label>
+                            <input class="form-control" asp-for="Price" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Product Category</label>
+                            <input class="form-control" asp-for="Category" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Discount</label>
+                            <input class="form-control" asp-for="Discount" />
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <input class="form-control" asp-for="Description" />
+                        </div>
+                    </div>
+                    <div class="col-md-1" style="margin-top:.80rem">
+                        <input type="button" class="btn btn-md btn-success float-right" id="btnUpdate" value="Update" />
+                    </div>
+                    <div class="col-md-1" style="margin-top:.80rem">
+                        <input type="button" class="btn btn-md btn-primary float-right" id="btnSubmit" value="Submit" />
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>

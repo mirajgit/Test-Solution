@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Test.UI.Models.ProductViewModel>
+<div class="container-fluid mt-3">
+    <div id="PartialProductList">
+        <div class="card-body table-responsive p-0">
+            <table id="tblTasksList" class="table table-bordered table-striped table-hover text-sm text-nowrap">
+                <thead>
+                    <tr>
+                        <th>SL</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Discount(%)</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int index = 1;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@index</td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.Category)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Price)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Discount)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                            <td>
+                                <a href="#" class="btn btn-xs btn-info" data-bs-toggle="modal" data-bs-target="#modal-xl"
+                                   onclick="GetEditProduct(@item.Id.ToString());">
+                                    <i class="fas fa-pen-square"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        index++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.js"></script>
+    <script src="~/AppJs/ShoppingProduct.js" asp-append-version="true"></script>
+}

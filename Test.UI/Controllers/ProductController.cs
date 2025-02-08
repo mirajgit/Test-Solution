@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Test.Entities;
 using Test.UI.Hubs;
+using Test.UI.Models;
 using Test.UI.Services.Interface;
 using Test.UI.SubscribeTableDependencies;
 using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
@@ -22,7 +23,7 @@ namespace Test.UI.Controllers
             _connectionString= Configuration.GetConnectionString("Test_Con");
         }
         [HttpPost]
-        public IActionResult ProductCreate(Product model)
+        public IActionResult ProductCreate(ProductViewModel model)
         {
             try
             {
@@ -42,7 +43,7 @@ namespace Test.UI.Controllers
             }
         }
         [HttpPost]
-        public IActionResult ProductUpdate(Product model)
+        public IActionResult ProductUpdate(ProductViewModel model)
         {
             try
             {
@@ -62,7 +63,7 @@ namespace Test.UI.Controllers
         [Microsoft.AspNetCore.Mvc.HttpGet]
         public IActionResult EditProduct(int id)
         {
-            Product model = new Product();
+            ProductViewModel model = new ProductViewModel();
             try
             {
                 var ProductInfo = _iProductRepository.GetProductById(id);
@@ -74,6 +75,8 @@ namespace Test.UI.Controllers
                 model.Name = ProductInfo.Name;
                 model.Category = ProductInfo.Category;
                 model.Price = ProductInfo.Price;
+                model.Discount = ProductInfo.Discount;
+                model.Description = ProductInfo.Description;
                 return Json(new { Success = true, Record = model });
             }
             catch (Exception ex)
