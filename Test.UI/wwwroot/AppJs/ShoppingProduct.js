@@ -19,25 +19,66 @@ function InvokeShoppingProducts() {
 }
 
 connection.on("ReceivedShoppingProducts", function (products) {
-	BindProductsToGrid(products);
+	allProducts = products; // Store the products in the global variable
+	BindProductsToGrid(allProducts); // Bind the products to the grid
+});
+$('#categoryFilter').on('change', function () {
+	var selectedCategory = $(this).val();
+	BindProductsToGrid(allProducts, selectedCategory); // Use the global products array
 });
 
-function BindProductsToGrid(products) {
-    $('#ProductList').empty(); // Clear existing products
-    var row = $('<div class="row">'); // Start a new row for products
+//function BindProductsToGrid(products) {
+//    $('#ProductList').empty(); // Clear existing products
+//    var row = $('<div class="row">'); // Start a new row for products
 
-    $.each(products, function (index, product) {
-        // If discount is null or undefined, set it to 0
-        var discount = product.discount || 0;
+//    $.each(products, function (index, product) {
+//        // If discount is null or undefined, set it to 0
+//        var discount = product.discount || 0;
 
-        var discountCircle = '';
-        if (discount > 0) {
-            discountCircle = `
-                <div class="discount-circle">-${discount}%</div>
-            `;
-        }
+//        var discountCircle = '';
+//        if (discount > 0) {
+//            discountCircle = `
+//                <div class="discount-circle">-${discount}%</div>
+//            `;
+//        }
 
-        var productCard = `
+//        var productCard = `
+//            <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+//                <div class="card shadow-lg">
+//                    <img src="/ProductImage/${product.image}" class="card-img-top" alt="Product Image">
+//                    ${discountCircle}
+//                    <div class="card-body text-center">
+//                        <h5 class="card-title">${product.name}</h5>
+//                        <p class="price">${product.price} ৳</p>
+//                        <p class="card-text text-muted">${product.description || 'No description available'}</p>
+//                        <div class="d-flex justify-content-between">
+//                            <button class="btn btn-sm btn-primary btn-custom w-90" onclick="AddToCart(${product.id})">Add to Cart</button>
+//                            <button class="btn btn-sm btn-success btn-custom w-90" onclick="BuyNow(${product.id})">Buy Now</button>
+//                        </div>
+//                    </div>
+//                </div>
+//            </div>
+//        `;
+
+//        row.append(productCard); // Add each product card to the row
+//    });
+
+//    $('#ProductList').append(row); // Append the row to the container
+//}
+function BindProductsToGrid(products, categoryFilter = "") {
+	$('#ProductList').empty(); // Clear existing products
+	var row = $('<div class="row">'); // Start a new row for products
+
+	// Filter products based on the selected category
+	var filteredProducts = categoryFilter
+		? products.filter(p => p.category === categoryFilter)
+		: products;
+
+	$.each(filteredProducts, function (index, product) {
+		var discount = product.discount || 0;
+		var discountCircle = discount > 0 ? `<div class="discount-circle">-${discount}%</div>` : '';
+
+		var productCard = `
             <div class="col-12 col-sm-6 col-md-3 col-lg-3">
                 <div class="card shadow-lg">
                     <img src="/ProductImage/${product.image}" class="card-img-top" alt="Product Image">
@@ -55,12 +96,11 @@ function BindProductsToGrid(products) {
             </div>
         `;
 
-        row.append(productCard); // Add each product card to the row
-    });
+		row.append(productCard);
+	});
 
-    $('#ProductList').append(row); // Append the row to the container
+	$('#ProductList').append(row);
 }
-
 
 function GetEditProduct(id) {
 	var param = {};
