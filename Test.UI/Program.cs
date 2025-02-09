@@ -19,10 +19,7 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.IsEssential = true;
 });
-
-// Configure DbContext
-builder.Services.AddDbContext<SMSanagement_DBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Test_Con")));
+var connectionString = builder.Configuration.GetConnectionString("Test_Con"); builder.Services.AddDbContext<SMSanagement_DBContext>(options => options.UseSqlServer(connectionString));
 
 // Add SignalR
 builder.Services.AddSignalR();
@@ -47,8 +44,6 @@ builder.Services.AddNotyf(config =>
 
 // Build the app before configuring middleware
 var app = builder.Build();
-var connectionString = app.Configuration.GetConnectionString("Test_Con");
-
 // Configure middleware
 if (!app.Environment.IsDevelopment())
 {
@@ -74,6 +69,5 @@ app.UseSqlTableDependency<SubscribeProductTableDependency>(connectionString);
 app.UseSqlTableDependency<SubscribeSaleTableDependency>(connectionString);
 app.UseSqlTableDependency<SubscribeCustomerTableDependency>(connectionString);
 app.UseSqlTableDependency<SubscribeShoppingProductTableDependency>(connectionString);
-
 // Run the application
 app.Run();
