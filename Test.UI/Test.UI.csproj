@@ -4,21 +4,26 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="AspNetCore.Reporting" Version="2.1.0" />
 		<PackageReference Include="AspNetCoreHero.ToastNotification" Version="1.1.0" />
+		<PackageReference Include="Aspose.PDF" Version="26.1.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
 		<PackageReference Include="Pdfium.Net.SDK" Version="4.94.2704" />
 		<PackageReference Include="PdfiumViewer.Native.x86.v8-xfa" Version="2018.4.8.256" />
 		<PackageReference Include="PdfiumViewer.Native.x86_64.v8-xfa" Version="2018.4.8.256" />
 		<PackageReference Include="PdfSharpCore" Version="1.3.65" />
 		<PackageReference Include="ReportViewerCore.NETCore" Version="15.1.25" />
+		<PackageReference Include="SkiaSharp" Version="3.119.1" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
 		<PackageReference Include="TableDependencyCore.SqlClient" Version="1.0.0" />
 		<PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
-		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
+		<PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />	
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />	
+		<PackageReference Include="ZXing.Net" Version="0.16.11" />
 
 		<!-- Explicitly reference 4.3.0 -->
 	</ItemGroup>
@@ -38,6 +43,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="Views\Shared\_Layout.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
 	  <Content Update="wwwroot\AppJs\SidebarManuFilter - Copy.js">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

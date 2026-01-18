@@ -17,5 +17,9 @@ public partial class Tbl_HRM_UserInformation
 
     public string Password { get; set; } = null!;
 
+    public string? BarcodeImage { get; set; }
+
+    public string? QRCodeImage { get; set; }
+
     public bool Status { get; set; }
 }

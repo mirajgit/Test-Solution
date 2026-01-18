@@ -20,7 +20,7 @@ namespace Test.UI.Services.Repository
                     obj.Name = model.Name;
                     obj.Category = model.Category;
                     obj.Price = model.Price;
-                    obj.Discount = model.Discount;
+                    obj.Discount = (int)model.Discount;
                     obj.Description = model.Description;
                     _context.Product.Add(obj);
                     _context.SaveChanges();
@@ -89,7 +89,6 @@ namespace Test.UI.Services.Repository
                         result.Name = model.Name;
                         result.Category = model.Category;
                         result.Price = model.Price;
-                        result.Discount = model.Discount;
                         result.Description = model.Description;
                         _context.SaveChanges();
                     }

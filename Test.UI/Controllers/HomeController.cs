@@ -1,13 +1,23 @@
+﻿using AspNetCore.Reporting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Reporting.NETCore;
 using PdfiumViewer;
+using SkiaSharp;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Drawing.Printing;
+using System.IO;
+using System.Net.NetworkInformation;
+using System.Web;
 using Test.Entities;
 using Test.UI.Models;
+using ZXing;
+using ZXing.Common;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace Test.UI.Controllers
 {
     public class HomeController : Controller
@@ -20,6 +30,55 @@ namespace Test.UI.Controllers
             _logger = logger;
             _Context = Context;
             _environment = environment;
+        }
+        [HttpGet]
+        public IActionResult Decrypt(string encryptedPath)
+        {
+            if (!string.IsNullOrEmpty(encryptedPath))
+            {
+                // URL-decode the encrypted path before decrypting
+                var decodedPath = HttpUtility.UrlDecode(encryptedPath);
+                var decryptedPath = DecryptUrl(decodedPath);  // Decrypt the URL path back
+
+                if (!string.IsNullOrEmpty(decryptedPath))
+                {
+                    // Now, handle the decrypted path: assuming it's something like "Controller/Action"
+                    var pathParts = decryptedPath.Split('/');
+
+                    // Assuming the first part is the controller, and the second is the action
+                    if (pathParts.Length == 2)
+                    {
+                        // Redirect to the controller and action
+                        return RedirectToAction(pathParts[1], pathParts[0]);
+                    }
+                }
+            }
+
+            // In case of failure, return a 404 or another appropriate result
+            return NotFound();
+        }
+
+        private string DecryptUrl(string encryptedPath)
+        {
+            try
+            {
+                // Revert the URL-safe Base64 encoding
+                var urlSafeBase64 = encryptedPath.Replace('-', '+').Replace('_', '/');
+                var padding = urlSafeBase64.Length % 4;
+                if (padding > 0)
+                {
+                    urlSafeBase64 = urlSafeBase64.PadRight(urlSafeBase64.Length + (4 - padding), '=');
+                }
+
+                // Decode the Base64 string back to the original URL
+                var pathBytes = Convert.FromBase64String(urlSafeBase64);
+                return System.Text.Encoding.UTF8.GetString(pathBytes);  // Return the decrypted URL
+            }
+            catch (Exception)
+            {
+                // Handle decryption failure
+                return string.Empty;
+            }
         }
         public IActionResult Index()
         {
@@ -38,7 +97,7 @@ namespace Test.UI.Controllers
                 {
                     ModelState.AddModelError("", "Your system date and time do not match the server's date and time."); 
                 } 
-                SqlParameter param1 = new SqlParameter("@DateOfBirth", new DateOnly(1998, 8, 20));
+                SqlParameter param1 = new SqlParameter("@DateOfBirth", new DateOnly(2023, 03, 01));
                 AgeResult result = _Context.Database.SqlQueryRaw<AgeResult>("Select dbo.Fn_AgeCalculator (@DateOfBirth) as Age", param1).FirstOrDefault();
                 ViewBag.result = result.Age;
                 return View();
@@ -128,29 +187,187 @@ namespace Test.UI.Controllers
         private byte[] PdfGenerate()
         {
             string reportPath = Path.Combine(_environment.WebRootPath, "Reports", "UserInformation.rdlc");
-            if (!System.IO.File.Exists(reportPath)) throw new FileNotFoundException($"RDLC file not found at {reportPath}");
-            LocalReport localReport = new LocalReport { ReportPath = reportPath };
-            var reportData = _Context.Tbl_HRM_UserInformation.Select(x => new Tbl_HRM_UserInformation
+            if (!System.IO.File.Exists(reportPath))
+                throw new FileNotFoundException($"RDLC file not found at {reportPath}");
+
+            Microsoft.Reporting.NETCore.LocalReport localReport = new Microsoft.Reporting.NETCore.LocalReport { ReportPath = reportPath };
+
+            // Step 1: Fetch data from database
+            var users = _Context.Tbl_HRM_UserInformation
+                .Select(x => new
+                {
+                    x.UserId,
+                    x.UserName,
+                    x.LoginName,
+                    x.Salary,
+                    x.UserEid,
+                    x.Password,
+                    x.Status
+                }).ToList(); // ✅ Execute query, data is in memory
+
+            // Step 2: Generate barcode images in memory
+            var reportData = users.Select(x => new
             {
-                UserId = x.UserId,
-                LoginName = x.LoginName,
-                Salary = x.Salary,
-                UserName = x.UserName,
-                UserEid = x.UserEid,
-                Password = x.Password,
-                Status = x.Status
+                x.UserId,
+                x.UserName,
+                x.LoginName,
+                x.Salary,
+                x.Password,
+                x.Status,
+                UserEid = GenerateBarcodeBase64(x.UserEid.ToString()) // ✅ Now safe
             }).ToList();
 
-            var expriencesDataSource = new ReportDataSource { Name = "DataSet1" };
-            localReport.DataSources.Add(expriencesDataSource);
-            expriencesDataSource.Value = reportData;
-            localReport.ReportPath = reportPath;
+            // 3️⃣ Set data source
+            var dataSource = new ReportDataSource { Name = "DataSet1", Value = reportData };
+            localReport.DataSources.Add(dataSource);
+
+            // 4️⃣ Render PDF
             string mimeType, encoding, fileNameExtension;
             Warning[] warnings;
             string[] streams;
-            byte[] renderedBytes = localReport.Render("PDF", null,out mimeType,out encoding,out fileNameExtension, out streams,out warnings);
+
+            byte[] renderedBytes = localReport.Render(
+                "PDF",
+                null,
+                out mimeType,
+                out encoding,
+                out fileNameExtension,
+                out streams,
+                out warnings
+            );
+
             return renderedBytes;
         }
+
+        // ✅ Helper method to generate barcode Base64 string
+        private string GenerateBarcodeBase64(string data)
+        {
+            var writer = new BarcodeWriterPixelData
+            {
+                Format = BarcodeFormat.CODE_39,
+                Options = new ZXing.Common.EncodingOptions
+                {
+                    Height = 35,
+                    Width = 30,
+                    Margin = 0
+                }
+            };
+
+            var pixelData = writer.Write(data);
+
+            using (var bitmap = new SKBitmap(pixelData.Width, pixelData.Height, SKColorType.Bgra8888, SKAlphaType.Premul))
+            {
+                // Copy pixels
+                unsafe
+                {
+                    fixed (byte* src = pixelData.Pixels)
+                    {
+                        IntPtr dst = bitmap.GetPixels();
+                        System.Runtime.InteropServices.Marshal.Copy(pixelData.Pixels, 0, dst, pixelData.Pixels.Length);
+                    }
+                }
+
+                using (var image = SKImage.FromBitmap(bitmap))
+                using (var ms = new MemoryStream())
+                {
+                    image.Encode(SKEncodedImageFormat.Png, 100).SaveTo(ms);
+                    return Convert.ToBase64String(ms.ToArray());
+                }
+            }
+        }
+        public static string GenerateQRCodeBase64(string data)
+        {
+            var writer = new BarcodeWriterPixelData
+            {
+                Format = BarcodeFormat.QR_CODE,
+                Options = new EncodingOptions
+                {
+                    Width = 150,
+                    Height = 150,
+                    Margin = 0
+                }
+            };
+
+            var pixelData = writer.Write(data);
+
+            using (var bitmap = new Bitmap(pixelData.Width, pixelData.Height, PixelFormat.Format32bppRgb))
+            {
+                for (int y = 0; y < pixelData.Height; y++)
+                {
+                    for (int x = 0; x < pixelData.Width; x++)
+                    {
+                        int index = (y * pixelData.Width + x) * 4;
+                        byte r = pixelData.Pixels[index];
+                        byte g = pixelData.Pixels[index + 1];
+                        byte b = pixelData.Pixels[index + 2];
+                        bitmap.SetPixel(x, y, Color.FromArgb(r, g, b));
+                    }
+                }
+
+                using (var ms = new MemoryStream())
+                {
+                    bitmap.Save(ms, ImageFormat.Png);
+                    return Convert.ToBase64String(ms.ToArray());
+                }
+            }
+        }
+        public IActionResult GetBarcode()
+        {
+            string reportPath = Path.Combine(_environment.WebRootPath, "Reports", "Barcode.rdlc");
+            if (!System.IO.File.Exists(reportPath))
+                throw new FileNotFoundException($"RDLC file not found at {reportPath}");
+
+            Microsoft.Reporting.NETCore.LocalReport localReport = new Microsoft.Reporting.NETCore.LocalReport { ReportPath = reportPath };
+
+            // Step 1: Fetch data from database
+            var users = _Context.Tbl_HRM_UserInformation
+                .Select(x => new
+                {
+                    x.UserId,
+                    x.UserName,
+                    x.LoginName,
+                    x.Salary,
+                    x.UserEid,
+                    x.Password,
+                    x.Status,
+                    x.BarcodeImage,
+                   x.QRCodeImage
+                }).ToList(); // ✅ Execute query, data is in memory
+
+            // Step 2: Generate barcode images in memory
+            var reportData = users.Select(x => new
+            {
+                x.UserId,
+                x.UserName,
+                x.LoginName,
+                x.Salary,
+                x.Password,
+                x.Status,
+                BarcodeImage = GenerateBarcodeBase64(x.BarcodeImage),
+                QRCodeImage = GenerateQRCodeBase64(x.QRCodeImage),
+            }).ToList();
+
+            // 3️⃣ Set data source
+            var dataSource = new ReportDataSource { Name = "DataSet1", Value = reportData };
+            localReport.DataSources.Add(dataSource);
+
+            // 4️⃣ Render PDF
+            string mimeType, encoding, fileNameExtension;
+            Warning[] warnings;
+            string[] streams;
+
+            byte[] renderedBytes = localReport.Render(
+                "PDF",
+                null,
+                out mimeType,
+                out encoding,
+                out fileNameExtension,
+                out streams,
+                out warnings
+            );
+            return File(renderedBytes, "application/pdf");
+        }
+
         public class AgeResult
         {
             public string Age { get; set; }

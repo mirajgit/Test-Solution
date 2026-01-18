@@ -19,7 +19,17 @@ public partial class SMSanagement_DBContext : DbContext
 
     public virtual DbSet<BookingInformation> BookingInformation { get; set; }
 
+    public virtual DbSet<ClassRoutine> ClassRoutine { get; set; }
+
     public virtual DbSet<Customer> Customer { get; set; }
+
+    public virtual DbSet<HRM_Department> HRM_Department { get; set; }
+
+    public virtual DbSet<HRM_Employee> HRM_Employee { get; set; }
+
+    public virtual DbSet<HRM_EmployeeInformation> HRM_EmployeeInformation { get; set; }
+
+    public virtual DbSet<ItemInformation> ItemInformation { get; set; }
 
     public virtual DbSet<PrinterSelection> PrinterSelection { get; set; }
 
@@ -32,8 +42,6 @@ public partial class SMSanagement_DBContext : DbContext
     public virtual DbSet<Sales_FollowUpDealingInformation> Sales_FollowUpDealingInformation { get; set; }
 
     public virtual DbSet<Tbl_HRM_CustomarInformation> Tbl_HRM_CustomarInformation { get; set; }
-
-    public virtual DbSet<Tbl_HRM_EmployeeInformation> Tbl_HRM_EmployeeInformation { get; set; }
 
     public virtual DbSet<Tbl_HRM_UserInformation> Tbl_HRM_UserInformation { get; set; }
 
@@ -82,17 +90,80 @@ public partial class SMSanagement_DBContext : DbContext
             entity.Property(e => e.Referance).HasMaxLength(50);
         });
 
+        modelBuilder.Entity<ClassRoutine>(entity =>
+        {
+            entity.HasKey(e => e.RoutingId).HasName("PK_Tbl_HRM_EmployeeInformation");
+
+            entity.Property(e => e.ClassName).HasMaxLength(50);
+            entity.Property(e => e.SubjectName).HasMaxLength(50);
+            entity.Property(e => e.TeacherName).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_Person");
 
-            entity.ToTable(tb => tb.HasTrigger("tr_dbo_Customer_f721e9d3-d4cb-4af8-847b-4a7413dc1ecc"));
+            entity.ToTable(tb =>
+                {
+                    tb.HasTrigger("tr_dbo_Customer_54138aa2-e4ae-47ba-a7fb-f3e258c4aa81");
+                    tb.HasTrigger("tr_dbo_Customer_aac28916-f34f-478f-b0e7-f1afd7117ef7");
+                });
 
             entity.Property(e => e.Gender).HasMaxLength(10);
             entity.Property(e => e.Mobile)
                 .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.Name).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<HRM_Department>(entity =>
+        {
+            entity.HasKey(e => e.DepartmentId);
+
+            entity.Property(e => e.DepartmentName).HasMaxLength(150);
+        });
+
+        modelBuilder.Entity<HRM_Employee>(entity =>
+        {
+            entity.HasKey(e => e.EmployeeID).HasName("PK__HRM_Empl__7AD04FF173CFDBF3");
+
+            entity.Property(e => e.EmployeeID).ValueGeneratedNever();
+            entity.Property(e => e.Department)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Phone)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<HRM_EmployeeInformation>(entity =>
+        {
+            entity.HasNoKey();
+
+            entity.Property(e => e.EmployeeStatus).HasMaxLength(50);
+            entity.Property(e => e.FirstName).HasMaxLength(50);
+            entity.Property(e => e.LastName).HasMaxLength(150);
+            entity.Property(e => e.MiddleName).HasMaxLength(50);
+            entity.Property(e => e.Salary).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.UserEid).HasMaxLength(50);
+            entity.Property(e => e.UserId).ValueGeneratedOnAdd();
+        });
+
+        modelBuilder.Entity<ItemInformation>(entity =>
+        {
+            entity.HasKey(e => e.ItemId);
+
+            entity.Property(e => e.ActualPrice).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Description).HasMaxLength(250);
+            entity.Property(e => e.ItemDiscount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.ItemName).HasMaxLength(150);
+            entity.Property(e => e.ItemPrice).HasColumnType("decimal(18, 2)");
         });
 
         modelBuilder.Entity<PrinterSelection>(entity =>
@@ -118,9 +189,10 @@ public partial class SMSanagement_DBContext : DbContext
         {
             entity.ToTable(tb =>
                 {
-                    tb.HasTrigger("tr_dbo_Product_03e044e1-7cb2-41e3-88b8-da54f7511e2a");
-                    tb.HasTrigger("tr_dbo_Product_0b0f539b-8c20-437c-808d-a3621e7c9a1f");
-                    tb.HasTrigger("tr_dbo_Product_ff3a6198-d3c1-424e-b776-2ce123826d72");
+                    tb.HasTrigger("tr_dbo_Product_7bbe3ddb-ed38-4a41-81ba-33dd7924bd17");
+                    tb.HasTrigger("tr_dbo_Product_b94d29d2-f1ad-43cc-9187-873f2d88e831");
+                    tb.HasTrigger("tr_dbo_Product_be1f35c1-95f1-477d-bea8-2d3f599fa832");
+                    tb.HasTrigger("tr_dbo_Product_eaae24dc-257b-4cf7-9845-efc6e6cb83fe");
                 });
 
             entity.Property(e => e.Category)
@@ -149,8 +221,8 @@ public partial class SMSanagement_DBContext : DbContext
 
             entity.ToTable(tb =>
                 {
+                    tb.HasTrigger("tr_dbo_Sale_136b77c4-f255-451c-92e6-4a180148051b");
                     tb.HasTrigger("tr_dbo_Sale_185cb40d-d675-43d1-abac-7dc3345b71f7");
-                    tb.HasTrigger("tr_dbo_Sale_2882a185-9da5-4aff-a650-a25b2db56bcc");
                 });
 
             entity.Property(e => e.Amount).HasColumnType("decimal(10, 2)");
@@ -206,22 +278,14 @@ public partial class SMSanagement_DBContext : DbContext
             entity.Property(e => e.UserName).HasMaxLength(150);
         });
 
-        modelBuilder.Entity<Tbl_HRM_EmployeeInformation>(entity =>
-        {
-            entity.HasKey(e => e.EmpId);
-
-            entity.Property(e => e.EmpAddress).HasMaxLength(50);
-            entity.Property(e => e.EmpContact).HasMaxLength(50);
-            entity.Property(e => e.EmpName).HasMaxLength(50);
-            entity.Property(e => e.Role).HasMaxLength(50);
-        });
-
         modelBuilder.Entity<Tbl_HRM_UserInformation>(entity =>
         {
             entity.HasKey(e => e.UserId).HasName("PK_UserInformation");
 
+            entity.Property(e => e.BarcodeImage).HasMaxLength(150);
             entity.Property(e => e.LoginName).HasMaxLength(50);
             entity.Property(e => e.Password).HasMaxLength(50);
+            entity.Property(e => e.QRCodeImage).HasMaxLength(150);
             entity.Property(e => e.Salary).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.UserEid).HasMaxLength(50);
             entity.Property(e => e.UserName).HasMaxLength(150);

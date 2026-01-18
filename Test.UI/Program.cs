@@ -1,6 +1,7 @@
 using AspNetCoreHero.ToastNotification;
 using Microsoft.EntityFrameworkCore;
 using Test.Entities;
+using Test.UI;
 using Test.UI.Hubs;
 using Test.UI.MiddlewareExtensions;
 using Test.UI.Services.Interface;
@@ -8,7 +9,12 @@ using Test.UI.Services.Repository;
 using Test.UI.SubscribeTableDependencies;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+        options.JsonSerializerOptions.DictionaryKeyPolicy = null; 
+    });
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -33,7 +39,6 @@ builder.Services.AddSingleton<SubscribeProductTableDependency>();
 builder.Services.AddSingleton<SubscribeSaleTableDependency>();
 builder.Services.AddSingleton<SubscribeCustomerTableDependency>();
 builder.Services.AddSingleton<SubscribeShoppingProductTableDependency>();
-
 // Configure Notification Service
 builder.Services.AddNotyf(config =>
 {
@@ -60,6 +65,14 @@ app.UseAuthorization();
 // Configure SignalR route and Map controller route
 app.MapHub<DashboardHub>("/dashboardHub");
 app.MapHub<ProductHub>("/productHub");
+// Custom route to handle encrypted URL
+app.MapControllerRoute(
+    name: "splApi",
+    pattern: "SPL/Api/{encodedPath}",
+    defaults: new { controller = "Spl", action = "Api" }
+);
+
+// Default route for other actions
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

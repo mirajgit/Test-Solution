@@ -1,0 +1,16 @@
+﻿@model Test.UI.Models.LoginViewModel
+@{
+    Layout = null;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <form asp-controller="Security" asp-action="Login" method="post" target="_blank">
+            <input asp-for="UserName" class="form-control" type="text" value="miraj"/>
+            <input asp-for="Password" class="form-control" type="password" value="123" />
+            <button type="submit" class="btn btn-primary">
+                Login
+            </button>
+        </form>
+    </div>
+</div>

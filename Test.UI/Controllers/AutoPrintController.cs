@@ -91,7 +91,7 @@ namespace Test.UI.Controllers
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error during printing: {ex.Message}");
+                        throw new Exception(ex.Message);
                     }
                 }
             }

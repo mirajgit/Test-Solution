@@ -246,14 +246,14 @@ function GetEditProduct(id) {
 	var param = {};
 	param.id = id;
 	$.get("/Product/EditProduct", param, function (res) {
-		if (!res.success) {
+		if (!res.Success) {
 			toastr.warning(res.Message);
 		}
 		else {
-			$("#Id").val(res.record.id);
-			$("#Name").val(res.record.name);
-			$("#Category").val(res.record.category);
-			$("#Price").val(res.record.price);
+			$("#Id").val(res.Record.Id);
+			$("#Name").val(res.Record.Name);
+			$("#Category").val(res.Record.Category);
+			$("#Price").val(res.Record.Price);
 		}
 	});
 }
@@ -270,13 +270,13 @@ $(document).on("click", "#btnUpdate", function () {
 		'Price': Price
 	};
 	$.post("/Product/ProductUpdate", postData, function (res) {
-		if (res.success) {
-			toastr.success(res.message);
+		if (res.Success) {
+			toastr.success(res.Message);
 			ClearUI()
 		}
 		else {
 
-			toastr.warning(res.message);
+			toastr.warning(res.Message);
 		}
 	});
 });
