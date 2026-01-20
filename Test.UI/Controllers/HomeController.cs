@@ -15,6 +15,7 @@ using System.Net.NetworkInformation;
 using System.Web;
 using Test.Entities;
 using Test.UI.Models;
+using WebAPI.Data;
 using ZXing;
 using ZXing.Common;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -247,8 +248,8 @@ namespace Test.UI.Controllers
                 Format = BarcodeFormat.CODE_39,
                 Options = new ZXing.Common.EncodingOptions
                 {
-                    Height = 35,
-                    Width = 30,
+                    Height = 80,
+                    Width = 300,
                     Margin = 0
                 }
             };
@@ -367,7 +368,74 @@ namespace Test.UI.Controllers
             );
             return File(renderedBytes, "application/pdf");
         }
+        public IActionResult GetQRBarcode()
+        {
+            string reportPath = Path.Combine(_environment.WebRootPath, "Reports", "Invoice.rdlc");
+            if (!System.IO.File.Exists(reportPath)) throw new FileNotFoundException($"RDLC file not found at {reportPath}");
 
+            Microsoft.Reporting.NETCore.LocalReport localReport = new Microsoft.Reporting.NETCore.LocalReport { ReportPath = reportPath };
+            var users = _Context.View_SalesInvoice.Where(x=>x.SalesId==1)
+                .Select(x => new
+                {
+                    x.SaleId,
+                    x.InvoiceNo,
+                    x.CustomarName,
+                    x.SaleDate,
+                    x.Tax,
+                    x.Discount,
+                    x.GrandTotal,
+                    x.TotalQuantity,
+                    x.PaidStatus,
+                    x.BarcodeImage,
+
+                    x.SalesDetailsId,
+                    x.SalesId,
+                    x.Item,
+                    x.Quantity,
+                    x.UnitPrice,
+                    x.Total
+                }).ToList();
+            var reportData = users.Select(x => new
+            {
+                x.SaleId,
+                x.InvoiceNo,
+                x.CustomarName,
+                x.SaleDate,
+                x.Tax,
+                x.Discount,
+                x.GrandTotal,
+                x.TotalQuantity,
+                x.PaidStatus,
+                BarcodeImage = GenerateQRCodeBase64(x.BarcodeImage),
+                x.SalesDetailsId,
+                x.SalesId,
+                x.Item,
+                x.Quantity,
+                x.UnitPrice,
+                x.Total
+
+            }).ToList();
+
+            // 3️⃣ Set data source
+            var dataSource = new ReportDataSource { Name = "DataSet1", Value = reportData };
+            localReport.DataSources.Add(dataSource);
+
+            // 4️⃣ Render PDF
+            string mimeType, encoding, fileNameExtension;
+            Warning[] warnings;
+            string[] streams;
+
+            byte[] renderedBytes = localReport.Render(
+                "PDF",
+                null,
+                out mimeType,
+                out encoding,
+                out fileNameExtension,
+                out streams,
+                out warnings
+            );
+            return File(renderedBytes, "application/pdf");
+        }
         public class AgeResult
         {
             public string Age { get; set; }

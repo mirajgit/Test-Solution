@@ -3,6 +3,7 @@ using TableDependency.EventArgs;
 using TableDependency.SqlClient;
 using Test.Entities;
 using Test.UI.Hubs;
+using WebAPI.Data;
 
 namespace Test.UI.SubscribeTableDependencies
 {

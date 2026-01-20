@@ -6,6 +6,7 @@ using System.Drawing.Printing;
 using Test.Entities;
 using Test.UI.Models;
 using Test.UI.Services.Interface;
+using WebAPI.Data;
 namespace Test.UI.Controllers
 {
     public class AutoPrintController : Controller

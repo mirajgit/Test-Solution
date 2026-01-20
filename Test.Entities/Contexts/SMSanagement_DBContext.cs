@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace Test.Entities;
+namespace WebAPI.Data;
 
 public partial class SMSanagement_DBContext : DbContext
 {
@@ -39,6 +39,10 @@ public partial class SMSanagement_DBContext : DbContext
 
     public virtual DbSet<Sale> Sale { get; set; }
 
+    public virtual DbSet<SalesDetails> SalesDetails { get; set; }
+
+    public virtual DbSet<SalesSummary> SalesSummary { get; set; }
+
     public virtual DbSet<Sales_FollowUpDealingInformation> Sales_FollowUpDealingInformation { get; set; }
 
     public virtual DbSet<Tbl_HRM_CustomarInformation> Tbl_HRM_CustomarInformation { get; set; }
@@ -50,6 +54,8 @@ public partial class SMSanagement_DBContext : DbContext
     public virtual DbSet<View_Cricket_CrecketerInformation> View_Cricket_CrecketerInformation { get; set; }
 
     public virtual DbSet<View_SMS_PendingMessage> View_SMS_PendingMessage { get; set; }
+
+    public virtual DbSet<View_SalesInvoice> View_SalesInvoice { get; set; }
 
     public virtual DbSet<WarrantyInformation> WarrantyInformation { get; set; }
 
@@ -231,6 +237,28 @@ public partial class SMSanagement_DBContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<SalesDetails>(entity =>
+        {
+            entity.Property(e => e.Item).HasMaxLength(250);
+            entity.Property(e => e.Quantity).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.Total).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(10, 2)");
+        });
+
+        modelBuilder.Entity<SalesSummary>(entity =>
+        {
+            entity.HasKey(e => e.SaleId);
+
+            entity.Property(e => e.CustomarName).HasMaxLength(50);
+            entity.Property(e => e.Discount).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.GrandTotal).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.InvoiceNo).HasMaxLength(50);
+            entity.Property(e => e.PaidStatus).HasMaxLength(50);
+            entity.Property(e => e.SaleDate).HasColumnType("datetime");
+            entity.Property(e => e.Tax).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.TotalQuantity).HasColumnType("decimal(10, 2)");
+        });
+
         modelBuilder.Entity<Sales_FollowUpDealingInformation>(entity =>
         {
             entity.HasKey(e => e.FollowUpDealingId);
@@ -320,6 +348,29 @@ public partial class SMSanagement_DBContext : DbContext
 
             entity.Property(e => e.LoginName).HasMaxLength(50);
             entity.Property(e => e.UserEid).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<View_SalesInvoice>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("View_SalesInvoice");
+
+            entity.Property(e => e.BarcodeImage)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.CustomarName).HasMaxLength(50);
+            entity.Property(e => e.Discount).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.GrandTotal).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.InvoiceNo).HasMaxLength(50);
+            entity.Property(e => e.Item).HasMaxLength(250);
+            entity.Property(e => e.PaidStatus).HasMaxLength(50);
+            entity.Property(e => e.Quantity).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.SaleDate).HasColumnType("datetime");
+            entity.Property(e => e.Tax).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.Total).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.TotalQuantity).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(10, 2)");
         });
 
         modelBuilder.Entity<WarrantyInformation>(entity =>

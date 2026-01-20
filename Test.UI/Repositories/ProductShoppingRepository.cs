@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
 using Test.Entities;
+using Test.UI.Models;
 
 namespace Test.UI.Repositories
 {

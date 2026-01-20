@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Test.Entities;
+namespace WebAPI.Data;
 
 public partial class HRM_Department
 {

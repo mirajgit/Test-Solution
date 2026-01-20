@@ -2,6 +2,7 @@
 using Test.Entities;
 using Test.UI.Models;
 using Test.UI.Services.Interface;
+using WebAPI.Data;
 
 namespace Test.UI.Services.Repository
 {
@@ -16,7 +17,7 @@ namespace Test.UI.Services.Repository
                     // Disable triggers temporarily
                     _context.Database.ExecuteSqlRaw("DISABLE TRIGGER ALL ON Product");
 
-                    Entities.Product obj = new Entities.Product();
+                    WebAPI.Data.Product obj = new WebAPI.Data.Product();
                     obj.Name = model.Name;
                     obj.Category = model.Category;
                     obj.Price = model.Price;

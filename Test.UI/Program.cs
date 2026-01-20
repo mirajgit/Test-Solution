@@ -7,6 +7,7 @@ using Test.UI.MiddlewareExtensions;
 using Test.UI.Services.Interface;
 using Test.UI.Services.Repository;
 using Test.UI.SubscribeTableDependencies;
+using WebAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
