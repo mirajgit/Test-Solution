@@ -23,7 +23,7 @@ public partial class View_SalesInvoice
 
     public string? PaidStatus { get; set; }
 
-    public string BarcodeImage { get; set; } = null!;
+    public string? BarcodeImage { get; set; }
 
     public long SalesDetailsId { get; set; }
 

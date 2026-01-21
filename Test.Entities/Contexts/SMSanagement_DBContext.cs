@@ -45,6 +45,10 @@ public partial class SMSanagement_DBContext : DbContext
 
     public virtual DbSet<Sales_FollowUpDealingInformation> Sales_FollowUpDealingInformation { get; set; }
 
+    public virtual DbSet<StockDetails> StockDetails { get; set; }
+
+    public virtual DbSet<StockSummary> StockSummary { get; set; }
+
     public virtual DbSet<Tbl_HRM_CustomarInformation> Tbl_HRM_CustomarInformation { get; set; }
 
     public virtual DbSet<Tbl_HRM_UserInformation> Tbl_HRM_UserInformation { get; set; }
@@ -295,6 +299,24 @@ public partial class SMSanagement_DBContext : DbContext
             entity.Property(e => e.Utility).HasColumnType("decimal(18, 2)");
         });
 
+        modelBuilder.Entity<StockDetails>(entity =>
+        {
+            entity.Property(e => e.Barcode).HasMaxLength(14);
+            entity.Property(e => e.Quantity).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.TotalPrice).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
+        });
+
+        modelBuilder.Entity<StockSummary>(entity =>
+        {
+            entity.HasKey(e => e.StockId);
+
+            entity.Property(e => e.Remarks).HasMaxLength(550);
+            entity.Property(e => e.StockInDate).HasColumnType("datetime");
+            entity.Property(e => e.StockInvoice).HasMaxLength(50);
+            entity.Property(e => e.VendorName).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<Tbl_HRM_CustomarInformation>(entity =>
         {
             entity.HasKey(e => e.CustomarId).HasName("PK_CustomarInformation");
@@ -356,9 +378,7 @@ public partial class SMSanagement_DBContext : DbContext
                 .HasNoKey()
                 .ToView("View_SalesInvoice");
 
-            entity.Property(e => e.BarcodeImage)
-                .HasMaxLength(1)
-                .IsUnicode(false);
+            entity.Property(e => e.BarcodeImage).HasMaxLength(50);
             entity.Property(e => e.CustomarName).HasMaxLength(50);
             entity.Property(e => e.Discount).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.GrandTotal).HasColumnType("decimal(10, 2)");

@@ -436,6 +436,120 @@ namespace Test.UI.Controllers
             );
             return File(renderedBytes, "application/pdf");
         }
+
+
+
+
+
+        public IActionResult PrintBarcode()
+        {
+            string reportPath = Path.Combine(_environment.WebRootPath, "Reports", "PrintBarcode.rdlc");
+            if (!System.IO.File.Exists(reportPath))
+                throw new FileNotFoundException($"RDLC file not found at {reportPath}");
+
+            Microsoft.Reporting.NETCore.LocalReport localReport = new Microsoft.Reporting.NETCore.LocalReport { ReportPath = reportPath };
+
+            var result = _Context.StockSummary
+                       .Where(a => a.StockInvoice == "INV-1004")
+                       .Join(
+                           _Context.StockDetails,
+                           a => a.StockId,
+                           b => b.StockId,
+                           (a, b) => new
+                           {
+                               a.StockId,
+                               a.VendorName,
+                               a.StockInvoice,
+                               a.StockInDate,
+                               a.Remarks,
+                               b.StockDetailsId,
+                               b.Barcode,
+                               b.UnitPrice,
+                               b.Quantity,
+                               b.TotalPrice
+                           }
+                       )
+                       .OrderByDescending(x => x.StockInDate)
+                       .ToList();
+
+            // 🔹 Quantity অনুযায়ী Barcode expand
+            var Data = result
+                .SelectMany(x => Enumerable.Range(1, (int)x.Quantity)
+                    .Select(q => new
+                    {
+                        x.StockId,
+                        x.VendorName,
+                        x.StockInvoice,
+                        x.StockInDate,
+                        x.Remarks,
+                        x.StockDetailsId,
+                        Barcode = GenerateBarcodeBase644(x.Barcode),
+                        OrginalBarcode= x.Barcode,// Bar code generate
+                        x.UnitPrice,
+                        x.Quantity,
+                        x.TotalPrice
+                    })
+                ).ToList();
+           var reportData = Data;
+            var dataSource = new ReportDataSource { Name = "DataSet1", Value = reportData };
+            localReport.DataSources.Add(dataSource);
+
+            string mimeType, encoding, fileNameExtension;
+            Warning[] warnings;
+            string[] streams;
+
+            byte[] renderedBytes = localReport.Render(
+                "PDF",
+                null,
+                out mimeType,
+                out encoding,
+                out fileNameExtension,
+                out streams,
+                out warnings
+            );
+
+            return File(renderedBytes, "application/pdf");
+        }
+
+        private string GenerateBarcodeBase644(string data)
+        {
+            var writer = new BarcodeWriterPixelData
+            {
+                Format = BarcodeFormat.CODE_39,
+                Options = new ZXing.Common.EncodingOptions
+                {
+                    Height = 50,
+                    Width = 150,
+                    Margin = 0
+                }
+            };
+
+            var pixelData = writer.Write(data);
+
+            using (var bitmap = new SKBitmap(pixelData.Width, pixelData.Height, SKColorType.Bgra8888, SKAlphaType.Premul))
+            {
+                // Copy pixels
+                unsafe
+                {
+                    fixed (byte* src = pixelData.Pixels)
+                    {
+                        IntPtr dst = bitmap.GetPixels();
+                        System.Runtime.InteropServices.Marshal.Copy(pixelData.Pixels, 0, dst, pixelData.Pixels.Length);
+                    }
+                }
+
+                using (var image = SKImage.FromBitmap(bitmap))
+                using (var ms = new MemoryStream())
+                {
+                    image.Encode(SKEncodedImageFormat.Png, 100).SaveTo(ms);
+                    return Convert.ToBase64String(ms.ToArray());
+                }
+            }
+        }
+
+
+
+
         public class AgeResult
         {
             public string Age { get; set; }
