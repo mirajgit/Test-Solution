@@ -11,7 +11,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.795in</Height>
+              <Height>1.22098in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -32,9 +32,42 @@
                                 </Border>
                               </Style>
                             </Image>
+                            <Textbox Name="Barcode">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!OrginalBarcode.Value</Value>
+                                      <Style>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <rd:DefaultName>Barcode</rd:DefaultName>
+                              <Top>0.63875in</Top>
+                              <Height>0.23501in</Height>
+                              <Width>2.33334in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <PaddingLeft>2pt</PaddingLeft>
+                                <PaddingRight>2pt</PaddingRight>
+                                <PaddingTop>2pt</PaddingTop>
+                                <PaddingBottom>2pt</PaddingBottom>
+                              </Style>
+                            </Textbox>
                           </ReportItems>
                           <KeepTogether>true</KeepTogether>
-                          <Height>0.72208in</Height>
+                          <Height>0.87375in</Height>
                           <Width>2.4375in</Width>
                           <Style>
                             <Border>
@@ -68,7 +101,8 @@
             </TablixMember>
           </TablixMembers>
         </TablixRowHierarchy>
-        <Height>0.795in</Height>
+        <DataSetName>DataSet1</DataSetName>
+        <Height>1.22098in</Height>
         <Width>2.5625in</Width>
         <Style>
           <Border>
@@ -77,7 +111,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>0.795in</Height>
+    <Height>1.22098in</Height>
     <Style>
       <Border>
         <Style>None</Style>
@@ -128,6 +162,7 @@
     ss.Remarks,
     sd.StockDetailsId,
     sd.Barcode,
+	sd.Barcode OrginalBarcode,
     sd.UnitPrice,
     sd.Quantity,
     sd.TotalPrice
@@ -170,6 +205,10 @@ ORDER BY ss.StockInDate DESC</CommandText>
         <Field Name="UnitPrice">
           <DataField>UnitPrice</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="OrginalBarcode">
+          <DataField>OrginalBarcode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Quantity">
           <DataField>Quantity</DataField>

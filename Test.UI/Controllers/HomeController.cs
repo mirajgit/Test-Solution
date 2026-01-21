@@ -239,8 +239,6 @@ namespace Test.UI.Controllers
 
             return renderedBytes;
         }
-
-        // ✅ Helper method to generate barcode Base64 string
         private string GenerateBarcodeBase64(string data)
         {
             var writer = new BarcodeWriterPixelData
@@ -250,32 +248,68 @@ namespace Test.UI.Controllers
                 {
                     Height = 80,
                     Width = 300,
-                    Margin = 0
+                    Margin = 2,
+                    PureBarcode = true   // 🔥 নিচে number দেখাবে
                 }
             };
 
             var pixelData = writer.Write(data);
 
-            using (var bitmap = new SKBitmap(pixelData.Width, pixelData.Height, SKColorType.Bgra8888, SKAlphaType.Premul))
-            {
-                // Copy pixels
-                unsafe
-                {
-                    fixed (byte* src = pixelData.Pixels)
-                    {
-                        IntPtr dst = bitmap.GetPixels();
-                        System.Runtime.InteropServices.Marshal.Copy(pixelData.Pixels, 0, dst, pixelData.Pixels.Length);
-                    }
-                }
+            using var bitmap = new SKBitmap(
+                pixelData.Width,
+                pixelData.Height,
+                SKColorType.Bgra8888,
+                SKAlphaType.Premul);
 
-                using (var image = SKImage.FromBitmap(bitmap))
-                using (var ms = new MemoryStream())
-                {
-                    image.Encode(SKEncodedImageFormat.Png, 100).SaveTo(ms);
-                    return Convert.ToBase64String(ms.ToArray());
-                }
-            }
+            System.Runtime.InteropServices.Marshal.Copy(
+                pixelData.Pixels, 0,
+                bitmap.GetPixels(),
+                pixelData.Pixels.Length);
+
+            using var image = SKImage.FromBitmap(bitmap);
+            using var ms = new MemoryStream();
+
+            image.Encode(SKEncodedImageFormat.Png, 100).SaveTo(ms);
+            return Convert.ToBase64String(ms.ToArray());
         }
+
+        //// ✅ Helper method to generate barcode Base64 string
+        //private string GenerateBarcodeBase64(string data)
+        //{
+        //    var writer = new BarcodeWriterPixelData
+        //    {
+        //        Format = BarcodeFormat.CODE_39,
+        //        Options = new ZXing.Common.EncodingOptions
+        //        {
+        //            Height = 80,
+        //            Width = 300,
+        //            Margin = 0,
+        //            PureBarcode = false
+        //        }
+        //    };
+
+        //    var pixelData = writer.Write(data);
+
+        //    using (var bitmap = new SKBitmap(pixelData.Width, pixelData.Height, SKColorType.Bgra8888, SKAlphaType.Premul))
+        //    {
+        //        // Copy pixels
+        //        unsafe
+        //        {
+        //            fixed (byte* src = pixelData.Pixels)
+        //            {
+        //                IntPtr dst = bitmap.GetPixels();
+        //                System.Runtime.InteropServices.Marshal.Copy(pixelData.Pixels, 0, dst, pixelData.Pixels.Length);
+        //            }
+        //        }
+
+        //        using (var image = SKImage.FromBitmap(bitmap))
+        //        using (var ms = new MemoryStream())
+        //        {
+        //            image.Encode(SKEncodedImageFormat.Png, 100).SaveTo(ms);
+        //            return Convert.ToBase64String(ms.ToArray());
+        //        }
+        //    }
+        //}
         public static string GenerateQRCodeBase64(string data)
         {
             var writer = new BarcodeWriterPixelData
@@ -450,7 +484,7 @@ namespace Test.UI.Controllers
             Microsoft.Reporting.NETCore.LocalReport localReport = new Microsoft.Reporting.NETCore.LocalReport { ReportPath = reportPath };
 
             var result = _Context.StockSummary
-                       .Where(a => a.StockInvoice == "INV-1004")
+                       .Where(a => a.StockInvoice == "INV-1001")
                        .Join(
                            _Context.StockDetails,
                            a => a.StockId,
@@ -464,6 +498,7 @@ namespace Test.UI.Controllers
                                a.Remarks,
                                b.StockDetailsId,
                                b.Barcode,
+                               OrginalBarcode= b.Barcode,
                                b.UnitPrice,
                                b.Quantity,
                                b.TotalPrice
@@ -482,7 +517,6 @@ namespace Test.UI.Controllers
                         x.StockInvoice,
                         x.StockInDate,
                         x.Remarks,
-                        x.StockDetailsId,
                         Barcode = GenerateBarcodeBase644(x.Barcode),
                         OrginalBarcode= x.Barcode,// Bar code generate
                         x.UnitPrice,
