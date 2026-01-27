@@ -97,6 +97,56 @@ namespace Test.UI.Controllers
                 }
             }
         }
+        public void PrintPDFd(byte[] pdfBytes, string printerName)
+        {
+            using var ms = new MemoryStream(pdfBytes);
+            using var pdfDocument = PdfiumViewer.PdfDocument.Load(ms);
+
+            var printDoc = new PrintDocument
+            {
+                PrinterSettings =
+        {
+            PrinterName = printerName
+        },
+                PrintController = new StandardPrintController() // no dialog, no status window
+            };
+
+            int pageIndex = 0;
+
+            printDoc.PrintPage += (s, e) =>
+            {
+                // Full page size
+                var pageBounds = e.PageBounds;
+
+                const int dpi = 600; // 👈 higher DPI = sharper print
+
+                int width = (int)(pageBounds.Width / 100f * dpi);
+                int height = (int)(pageBounds.Height / 100f * dpi);
+
+                using var image = pdfDocument.Render(
+                    pageIndex,
+                    width,
+                    height,
+                    dpi,
+                    dpi,
+                    PdfiumViewer.PdfRenderFlags.Annotations
+                );
+
+                e.Graphics.InterpolationMode =
+                    System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                e.Graphics.SmoothingMode =
+                    System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                e.Graphics.PixelOffsetMode =
+                    System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
+                e.Graphics.DrawImage(image, pageBounds);
+
+                pageIndex++;
+                e.HasMorePages = pageIndex < pdfDocument.PageCount;
+            };
+
+            printDoc.Print();
+        }
         [HttpPost]
         public IActionResult PrintReport()
         {
